@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+.vs
+ui_*.py
 # Distribution / packaging
 .Python
 build/

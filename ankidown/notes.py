@@ -2,6 +2,8 @@ from anki.notes import Note
 from anki.utils import fieldChecksum
 from aqt import mw
 
+from .markdownify import markdownify as md
+
 
 def createNote(deck, model_name, fields, tags=[]):
     collection = mw.col
@@ -38,3 +40,15 @@ def noteAddOrUpdate(note):
         mw.col.addNote(note)
     elif note.dupeOrEmpty() is 2:
         noteUpdate(note)
+
+def noteFormat(note):
+    res = ""
+    for field_name, field_value in note.items():
+        if field_value:
+            field_value = md(field_value)
+            res += """# {field_name}
+
+{field_value}
+
+""".format(field_name=field_name, field_value=field_value)
+    return res
