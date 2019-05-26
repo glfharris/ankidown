@@ -3,7 +3,7 @@ from aqt import mw
 from aqt.qt import *
 
 from .notes import noteFormat
-from .ui_dialog import Ui_AnkidownDialog
+from .forms.ui_exporter import Ui_AnkidownDialog
 
 class AnkidownDialog(QDialog, Ui_AnkidownDialog):
     def __init__(self, mw):

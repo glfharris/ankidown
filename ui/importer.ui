@@ -87,6 +87,13 @@
        <item>
         <widget class="QWidget" name="fieldsArea" native="true"/>
        </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::NoButton</set>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -100,6 +107,26 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
- <connections/>
+ <connections>
+       <connection>
+              <sender>buttonBox</sender>
+                 <signal>rejected()</signal>
+                    <receiver>Dialog</receiver>
+                       <slot>reject()</slot>
+                       <hints>
+                           <hint type="sourceLabel">
+                               <x>301</x>
+                               <y>-1</y>
+                            </hint>
+                            <hint type="destinationLabel">
+                                <x>286</x>
+                                <y>274</y>
+                            </hint>
+                        </hints>
+        </connection>
+ </connections>
 </ui>

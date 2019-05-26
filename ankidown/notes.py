@@ -2,7 +2,7 @@ from anki.notes import Note
 from anki.utils import fieldChecksum
 from aqt import mw
 
-from .markdownify import markdownify as md
+from .vendor.markdownify import markdownify as md
 
 
 def createNote(deck, model_name, fields, tags=[]):
