@@ -17,59 +17,70 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="inputTab">
-        <attribute name="title">
-         <string>Input</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="inputTab">
+          <attribute name="title">
+           <string>Input</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QVBoxLayout" name="verticalLayout_8">
              <item>
-              <widget class="QPushButton" name="chooseFile">
-               <property name="text">
-                <string>Choose File</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QPushButton" name="selectFile">
+                 <property name="text">
+                  <string>Select File</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="QLabel" name="fileLabel">
-               <property name="text">
-                <string>Choose a file...</string>
-               </property>
-              </widget>
+              <widget class="QPlainTextEdit" name="noteTextEdit"/>
              </item>
             </layout>
            </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="templateTab">
+          <attribute name="title">
+           <string>Template</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
-            <widget class="QPlainTextEdit" name="noteTextEdit"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="previewButton">
+            <widget class="QPushButton" name="selectTemplate">
              <property name="text">
-              <string>Preview</string>
+              <string>Select Template</string>
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPlainTextEdit" name="templateTextEdit"/>
+           </item>
           </layout>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="templateTab">
-        <attribute name="title">
-         <string>Template</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="QPlainTextEdit" name="templateTextEdit"/>
-         </item>
-        </layout>
-       </widget>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="previewButton">
+         <property name="text">
+          <string>Preview</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
       </widget>
      </item>
      <item>
@@ -96,13 +107,6 @@
        </item>
       </layout>
      </item>
-     <item>
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>
@@ -111,22 +115,5 @@
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
- <connections>
-       <connection>
-              <sender>buttonBox</sender>
-                 <signal>rejected()</signal>
-                    <receiver>Dialog</receiver>
-                       <slot>reject()</slot>
-                       <hints>
-                           <hint type="sourceLabel">
-                               <x>301</x>
-                               <y>-1</y>
-                            </hint>
-                            <hint type="destinationLabel">
-                                <x>286</x>
-                                <y>274</y>
-                            </hint>
-                        </hints>
-        </connection>
- </connections>
+ <connections/>
 </ui>
