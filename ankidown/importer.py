@@ -3,13 +3,14 @@ from anki.sound import clearAudioQueue
 
 import aqt
 from aqt.addcards import AddCards
-from aqt.utils import saveGeom, restoreGeom
+from aqt.utils import saveGeom, restoreGeom, addCloseShortcut
 from aqt.qt import *
 
 from difflib import get_close_matches
 from markdown import markdown as md
 from re import sub
 
+from .template import Templater
 from .forms.ui_importer import Ui_AnkidownImportDialog
 from .vendor.parse import parse
 
@@ -22,6 +23,7 @@ class AnkidownImporter(AddCards):
         self.form.setupUi(self)
         self.mw = mw
 
+        self.template = Templater(self.mw, self.form.templateTab, self)
         self.setupChoosers()
         self.setupEditor()
         self.setupButtons()
@@ -31,19 +33,20 @@ class AnkidownImporter(AddCards):
         
         self.onReset()
         restoreGeom(self, "ankidown")
+        addCloseShortcut(self)
         self.history = []
         self.show()
         self.activateWindow()
 
     def setupButtons(self):
-        AddCards.setupButtons(self)
+        super().setupButtons()
+        self.closeButton.clicked.connect(self.reject)
         self.form.selectFile.clicked.connect(self.onFilePicked)
-        self.form.selectTemplate.clicked.connect(self.onTemplatePicked)
         self.form.previewButton.clicked.connect(self.onPreview)
 
     def onPreview(self):
         text = self.form.noteTextEdit.toPlainText()
-        template = self.form.templateTextEdit.toPlainText()
+        template = self.template.templateText.toPlainText()
 
         def sanitize(black_list, template):
             for char in black_list:
@@ -66,11 +69,8 @@ class AnkidownImporter(AddCards):
             self.form.noteTextEdit.setPlainText(f.read())
         self.form.selectFile.setText(file_name)
 
-    def onTemplatePicked(self):
-        template_name = aqt.utils.getFile(self, "Select a Template to use", None, key="")
-        with open(template_name, "r") as f:
-            self.form.templateTextEdit.setPlainText(f.read())
-        self.form.selectTemplate.setText(template_name)
+    def onTemplateChange(self):
+        print("Template has changed!")
     
     def _reject(self):
         remHook('reset', self.onReset)

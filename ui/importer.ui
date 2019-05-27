@@ -21,7 +21,7 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="inputTab">
           <attribute name="title">
@@ -52,18 +52,6 @@
           <attribute name="title">
            <string>Template</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <widget class="QPushButton" name="selectTemplate">
-             <property name="text">
-              <string>Select Template</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPlainTextEdit" name="templateTextEdit"/>
-           </item>
-          </layout>
          </widget>
         </widget>
        </item>
