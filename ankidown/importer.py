@@ -3,16 +3,18 @@ from anki.sound import clearAudioQueue
 
 import aqt
 from aqt.addcards import AddCards
-from aqt.utils import saveGeom, restoreGeom, addCloseShortcut
+from aqt.utils import saveGeom, restoreGeom, addCloseShortcut, askUser
 from aqt.qt import *
 
 from difflib import get_close_matches
 from markdown import markdown as md
 from re import sub
+from os import path
 
-from .template import Templater
+from .template import TemplaterWidget
 from .forms.ui_importer import Ui_AnkidownImportDialog
 from .vendor.parse import parse
+from .utils import getConfig
 
 class AnkidownImporter(AddCards):
     def __init__(self, mw):
@@ -23,7 +25,11 @@ class AnkidownImporter(AddCards):
         self.form.setupUi(self)
         self.mw = mw
 
-        self.template = Templater(self.mw, self.form.templateTab, self)
+        self.history = []
+        self.buffer = []
+
+        self.templateWidget = TemplaterWidget(self.mw,
+                self.form.templateTab, self)
         self.setupChoosers()
         self.setupEditor()
         self.setupButtons()
@@ -31,22 +37,44 @@ class AnkidownImporter(AddCards):
         addHook('currentModelChanged', self.onModelChange)
         addHook('reset', self.onReset)
         
-        self.onReset()
         restoreGeom(self, "ankidown")
         addCloseShortcut(self)
-        self.history = []
+
+        self.onReset()
         self.show()
         self.activateWindow()
+
+    def addCards(self):
+        super().addCards()
 
     def setupButtons(self):
         super().setupButtons()
         self.closeButton.clicked.connect(self.reject)
         self.form.selectFile.clicked.connect(self.onFilePicked)
+
+        self.form.prevButton.clicked.connect(self.prevNote)
+        self.form.prevButton.setShortcut("Left")
+        self.form.nextButton.clicked.connect(self.nextNote)
+        self.form.nextButton.setShortcut("Right")
+
         self.form.previewButton.clicked.connect(self.onPreview)
+        self.form.previewButton.setShortcut("Space")
+
+    def nextNote(self):
+        if self.bufferIndex + 1 < len(self.buffer):
+            self.setBuffer(self.bufferIndex + 1)
+        else:
+            self.setBuffer(0)
+
+    def prevNote(self):
+        if self.bufferIndex is 0:
+            self.setBuffer(len(self.buffer) - 1)
+        else:
+            self.setBuffer(self.bufferIndex - 1)
 
     def onPreview(self):
         text = self.form.noteTextEdit.toPlainText()
-        template = self.template.templateText.toPlainText()
+        template = self.templateWidget.templateText.toPlainText()
 
         def sanitize(black_list, template):
             for char in black_list:
@@ -64,13 +92,31 @@ class AnkidownImporter(AddCards):
 
     
     def onFilePicked(self):
-        file_name = aqt.utils.getFile(self, "Choose File to Import", None, key="")
-        with open(file_name, "r") as f:
-            self.form.noteTextEdit.setPlainText(f.read())
-        self.form.selectFile.setText(file_name)
+        config = getConfig()
+        self.buffer = []
+        file_names = aqt.utils.getFile(self,
+                "Select File to Import", None, key="ankidown-files", multi=True)
+        for file_name in file_names:
+            with open(file_name, "r") as f:
+                text = f.read()
+                if config["note_separator"]:
+                    text = [tmp.lstrip() for tmp in text.split(config["note_separator"])]
+                else:
+                    text = [text]
+                for raw_note in text:
+                    self.buffer.append({"file_name": file_name,"text": raw_note})
+        self.setBuffer(0) # Given root index
+
+    def setBuffer(self, index):
+        self.bufferIndex = index
+
+        self.form.noteTextEdit.setPlainText(self.buffer[index]['text'])
+        name = path.split(self.buffer[index]['file_name'])[1]
+        self.form.selectFile.setText("File: {} Note: {} of {}".format(
+            name, index + 1, len(self.buffer)))
 
     def onTemplateChange(self):
-        print("Template has changed!")
+        pass
     
     def _reject(self):
         remHook('reset', self.onReset)
@@ -84,3 +130,10 @@ class AnkidownImporter(AddCards):
         saveGeom(self, "ankidown")
         aqt.dialogs.markClosed("Ankidown-Importer")
         QDialog.reject(self)
+
+    def ifCanClose(self, onOk):
+        def afterSave():
+            if askUser(_("Close and lose current input?")):
+                onOk()
+
+        self.editor.saveNow(afterSave)

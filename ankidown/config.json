@@ -1,4 +1,6 @@
 {
-    'note_separator': '---',
-    'templates': [],
+    "multiple_notes_per_file": true,
+    "note_separator": "---",
+    "last_template": "",
+    "templates": {}
 }
