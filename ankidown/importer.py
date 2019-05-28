@@ -87,15 +87,16 @@ class AnkidownImporter(AddCards):
         for k,v in res.named.items():
             key = get_close_matches(k, new_note.keys())[0]
             new_note[key] = md(v)
-        
+
         self.editor.setNote(new_note)
 
-    
+
     def onFilePicked(self):
         config = getConfig()
         self.buffer = []
         file_names = aqt.utils.getFile(self,
                 "Select File to Import", None, key="ankidown-files", multi=True)
+        # Scope for improved performance by only loading text when needed
         for file_name in file_names:
             with open(file_name, "r") as f:
                 text = f.read()
@@ -117,7 +118,7 @@ class AnkidownImporter(AddCards):
 
     def onTemplateChange(self):
         pass
-    
+
     def _reject(self):
         remHook('reset', self.onReset)
         remHook('currentModelChanged', self.onModelChange)

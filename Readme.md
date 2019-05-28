@@ -5,4 +5,4 @@ It's primary purpose is to prevent duplicate effort and streamline the creation 
 
 Currently Ankidown allows you to import a file and it's template, and convert it directly into a pre-existing Note Type (read the Anki manual if this is unfamiliar).
 
-![](assets/example.gif)
+![](assets/ankidown.gif)
