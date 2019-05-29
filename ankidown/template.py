@@ -93,20 +93,12 @@ class Template:
     def __init__(self, name='', text='', create=False):
         config = getConfig()
         if name in config['templates'].keys():
-            self.load(name)
+            self.name = name
+            self.text = config['templates'][self.name]['text']
         else:
             self.name = name
             self.text = text
             self.save()
-
-    def load(self, name):
-        config = getConfig()
-
-        if name in config['templates'].keys():
-            self.name = name
-            self.text = config['templates'][name]['text']
-        else:
-            showInfo("Template '{}' does not exist".format(name))
 
     def save(self):
         config = getConfig()
@@ -121,7 +113,7 @@ class Template:
         writeConfig(config)
 
     def keys(self):
-        # Matches on everything contained within {}
+        # Matches on everything contained within {} that isn't a `{` or a `}`
         ret = re.findall("\{[^\{\}]*\}", self.text)
         # Removes all { and } characters from string x
         return [ re.sub("[\{\}]", "", x) for x in ret ]

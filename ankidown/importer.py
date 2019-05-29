@@ -27,7 +27,6 @@ class AnkidownImporter(AddCards):
         self.mw = mw
 
         self.history = []
-        self.buffer = [AnkidownNote()]
 
         self.templateWidget = TemplaterWidget(self.mw,
                 self.form.templateTab, self)
@@ -37,19 +36,32 @@ class AnkidownImporter(AddCards):
 
         addHook('currentModelChanged', self.onModelChange)
         addHook('reset', self.onReset)
-        
+
         restoreGeom(self, "ankidown")
         addCloseShortcut(self)
 
-        self.setBuffer(0)
+        self.setupBuffer()
 
         self.onReset()
         self.show()
         self.activateWindow()
 
     def addCards(self):
-        super().addCards()
-        self.nextNote()
+        super().addNote(self.currentNote().note)
+        self.onReset(keep=True)
+        self.mw.col.autosave()
+        self.buffer.remove(self.currentNote())
+        if self.bufferIndex < len(self.buffer):
+            self.setBuffer(self.bufferIndex)
+        elif len(self.buffer) > 0:
+            self.setBuffer(self.bufferIndex - 1)
+        else:
+            self.setupBuffer()
+
+    def setupBuffer(self):
+        self.buffer = [ AnkidownNote() ]
+        self.setBuffer(0)
+
 
     def setupButtons(self):
         super().setupButtons()
