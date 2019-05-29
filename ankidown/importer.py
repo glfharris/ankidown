@@ -11,6 +11,7 @@ from markdown import markdown as md
 from re import sub
 from os import path
 
+from .note import AnkidownNote
 from .template import TemplaterWidget
 from .forms.ui_importer import Ui_AnkidownImportDialog
 from .vendor.parse import parse
@@ -26,7 +27,7 @@ class AnkidownImporter(AddCards):
         self.mw = mw
 
         self.history = []
-        self.buffer = []
+        self.buffer = [AnkidownNote()]
 
         self.templateWidget = TemplaterWidget(self.mw,
                 self.form.templateTab, self)
@@ -40,12 +41,15 @@ class AnkidownImporter(AddCards):
         restoreGeom(self, "ankidown")
         addCloseShortcut(self)
 
+        self.setBuffer(0)
+
         self.onReset()
         self.show()
         self.activateWindow()
 
     def addCards(self):
         super().addCards()
+        self.nextNote()
 
     def setupButtons(self):
         super().setupButtons()
@@ -60,6 +64,11 @@ class AnkidownImporter(AddCards):
         self.form.previewButton.clicked.connect(self.onPreview)
         self.form.previewButton.setShortcut("Space")
 
+        self.form.noteTextEdit.textChanged.connect(self.onNoteTextChanged)
+
+    def currentNote(self):
+        return self.buffer[self.bufferIndex]
+
     def nextNote(self):
         if self.bufferIndex + 1 < len(self.buffer):
             self.setBuffer(self.bufferIndex + 1)
@@ -72,23 +81,16 @@ class AnkidownImporter(AddCards):
         else:
             self.setBuffer(self.bufferIndex - 1)
 
-    def onPreview(self):
+    def onNoteTextChanged(self):
         text = self.form.noteTextEdit.toPlainText()
-        template = self.templateWidget.templateText.toPlainText()
+        self.currentNote().text = text
 
-        def sanitize(black_list, template):
-            for char in black_list:
-                template = sub(r'\{.+?\}', lambda x:x.group().replace(char, '_'), template)
-            return template
-        template = sanitize(" -", template)
-        res = parse(template, text)
-
-        new_note = self.mw.col.newNote()
-        for k,v in res.named.items():
-            key = get_close_matches(k, new_note.keys())[0]
-            new_note[key] = md(v)
-
-        self.editor.setNote(new_note)
+    def onPreview(self):
+        if not self.currentNote().template:
+            self.currentNote().render(tmp_template=self.template)
+        else:
+            self.currentNote().render()
+        self.editor.setNote(self.currentNote().note)
 
 
     def onFilePicked(self):
@@ -105,19 +107,21 @@ class AnkidownImporter(AddCards):
                 else:
                     text = [text]
                 for raw_note in text:
-                    self.buffer.append({"file_name": file_name,"text": raw_note})
+                    self.buffer.append(AnkidownNote(file=file_name, text=raw_note))
+        for note in self.buffer:
+            note.render(tmp_template=self.template)
         self.setBuffer(0) # Given root index
 
     def setBuffer(self, index):
         self.bufferIndex = index
 
-        self.form.noteTextEdit.setPlainText(self.buffer[index]['text'])
-        name = path.split(self.buffer[index]['file_name'])[1]
+        self.form.noteTextEdit.setPlainText(self.buffer[index].text)
+        name = path.split(self.buffer[index].file)[1]
         self.form.selectFile.setText("File: {} Note: {} of {}".format(
             name, index + 1, len(self.buffer)))
 
-    def onTemplateChange(self):
-        pass
+        if self.currentNote().note:
+            self.editor.setNote(self.currentNote().note)
 
     def _reject(self):
         remHook('reset', self.onReset)

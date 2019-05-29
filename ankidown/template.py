@@ -2,7 +2,7 @@ import aqt
 from aqt.utils import *
 from aqt.qt import *
 
-from .utils import getConfig, writeConfig
+from .utils import getConfig, writeConfig, sanitize
 
 class TemplaterWidget:
     def __init__(self, mw, widget, parentWindow):
@@ -46,9 +46,12 @@ class TemplaterWidget:
     def setupTemplate(self):
         config = getConfig()
 
-        template = Template()
         if config['last_template'] in config['templates'].keys():
-            template.load(config['last_template'])
+            template = Template(name=config['last_template'])
+        else:
+            name = getOnlyText("New Template name:")
+            template = Template(name=name)
+
         self.setTemplate(template)
 
 
@@ -71,10 +74,9 @@ class TemplaterWidget:
 
         if selection is 0:
             name = getOnlyText("New Template name:")
-            template = Template(name=name)
         else:
-            template = Template()
-            template.load(template_list[selection])
+            name = template_list[selection]
+        template = Template(name=name)
         self.setTemplate(template)
 
     def setTemplate(self, template):
@@ -85,12 +87,17 @@ class TemplaterWidget:
 
         config['last_template'] = self.template.name
         writeConfig(config)
-        self.parentWindow.onTemplateChange()
+        self.parentWindow.template = self.template
 
 class Template:
     def __init__(self, name='', text='', create=False):
-        self.name = name
-        self.text = text
+        config = getConfig()
+        if name in config['templates'].keys():
+            self.load(name)
+        else:
+            self.name = name
+            self.text = text
+            self.save()
 
     def load(self, name):
         config = getConfig()
@@ -118,5 +125,8 @@ class Template:
         ret = re.findall("\{[^\{\}]*\}", self.text)
         # Removes all { and } characters from string x
         return [ re.sub("[\{\}]", "", x) for x in ret ]
+    
+    def gen(self):
+        return sanitize(" -", self.text)
 
 

@@ -1,6 +1,10 @@
 {
     "multiple_notes_per_file": true,
     "note_separator": "---",
-    "last_template": "",
-    "templates": {}
+    "last_template": "Basic",
+    "templates": {
+        "Basic": {
+            "text": "# {Front}\n{Back}"
+        }
+    }
 }
