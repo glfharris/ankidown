@@ -17,3 +17,15 @@ def sanitize(black_list, string):
 
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
+
+def modelFieldNames(model_name):
+    collection = mw.col
+    model = collection.models.byName(model_name)
+    return [field['name'] for field in model['flds']]
+
+def modelNames():
+    collection = mw.col
+
+    return collection.models.allNames()
+
+

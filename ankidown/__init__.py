@@ -2,9 +2,6 @@ import aqt
 from aqt import mw, DialogManager, dialogs
 from aqt.qt import QAction, QInputDialog, QMenu
 
-from .export import noteExport
-from .notes import createNote, noteAddOrUpdate
-from .models import *
 from .importer import AnkidownImporter
 
 DialogManager._dialogs["Ankidown-Importer"] = [AnkidownImporter, None]

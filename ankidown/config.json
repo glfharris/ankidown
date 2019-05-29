@@ -1,4 +1,6 @@
 {
+    "min_match_ratio": 0.7,
+    "recent_models": [],
     "multiple_notes_per_file": true,
     "note_separator": "---",
     "last_template": "Basic",

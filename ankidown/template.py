@@ -2,7 +2,7 @@ import aqt
 from aqt.utils import *
 from aqt.qt import *
 
-from .utils import getConfig, writeConfig, sanitize
+from .utils import getConfig, writeConfig, sanitize, similar, modelFieldNames, modelNames
 
 class TemplaterWidget:
     def __init__(self, mw, widget, parentWindow):
@@ -104,7 +104,12 @@ class Template:
         config = getConfig()
 
         if not self.name: # TODO handle bad name input
-            self.name = getOnlyText("New Template name:")
+            name = getOnlyText("New Template name:")
+
+            if not name:
+                return
+            else:
+                self.name = name
 
         if self.name not in config['templates'].keys():
             config['templates'][self.name] = {'text': ''}
@@ -117,8 +122,37 @@ class Template:
         ret = re.findall("\{[^\{\}]*\}", self.text)
         # Removes all { and } characters from string x
         return [ re.sub("[\{\}]", "", x) for x in ret ]
-    
+
     def gen(self):
         return sanitize(" -", self.text)
 
+    def findSimilar(self):
+        model_names = modelNames()
+        totals = []
+        for mod in model_names:
+            _, b = self.getSimilarity(mod)
+            totals.append({'model': mod,'tot': sum(b.values())})
+
+        return sorted(totals, key=lambda x: x['tot'], reverse=True)
+
+    def getSimilarity(self,model_name):
+        config = getConfig()
+        fields = modelFieldNames(model_name)
+        ret = []
+        max_ratios = {}
+        key_field_map = {}
+
+        for key in self.keys():
+            for field in fields:
+                ret.append({"key": key, "field": field, "ratio": similar(key, field)})
+        ret.sort(key=lambda pair: pair['ratio'], reverse=True)
+
+        for pair in ret:
+            if pair['key'] not in key_field_map.keys():
+                if pair['field'] not in key_field_map.values():
+                    if pair['ratio'] >= config['min_match_ratio']:
+                        max_ratios[pair['key']] = pair['ratio']
+                        key_field_map[pair['key']] = pair['field']
+
+        return key_field_map, max_ratios
 

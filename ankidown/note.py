@@ -18,17 +18,18 @@ class AnkidownNote:
 
     def render(self, model=None, tmp_template=None):
 
+        if tmp_template:
+            template = tmp_template
+        else:
+            template = self.template
+
         if not model:
-            note = mw.col.newNote()
+            model_name = template.findSimilar()[0]['model']
+            note = Note(mw.col, model=mw.col.models.byName(model_name))
         else:
             note = Note(mw.col, model=model)
 
-        if tmp_template:
-            template = tmp_template.gen()
-        else:
-            template = self.template.gen()
-
-        res = parse(template, self.text)
+        res = parse(template.gen(), self.text)
 
         for k, v in res.named.items():
             key = get_close_matches(k, note.keys())[0]

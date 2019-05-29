@@ -1,9 +1,9 @@
-from anki.hooks import addHook, remHook
+from anki.hooks import addHook, remHook, runHook
 from anki.sound import clearAudioQueue
 
 import aqt
 from aqt.addcards import AddCards
-from aqt.utils import saveGeom, restoreGeom, addCloseShortcut, askUser
+from aqt.utils import saveGeom, restoreGeom, addCloseShortcut, askUser, tooltip
 from aqt.qt import *
 
 from difflib import get_close_matches
@@ -15,10 +15,11 @@ from .note import AnkidownNote
 from .template import TemplaterWidget
 from .forms.ui_importer import Ui_AnkidownImportDialog
 from .vendor.parse import parse
-from .utils import getConfig
+from .utils import getConfig, writeConfig
 
 class AnkidownImporter(AddCards):
     def __init__(self, mw):
+        self.tally = 0
         QDialog.__init__(self, None, Qt.Window)
         self.Dialog = self
         mw.setupDialogGC(self)
@@ -33,6 +34,7 @@ class AnkidownImporter(AddCards):
         self.setupChoosers()
         self.setupEditor()
         self.setupButtons()
+        self.setupBuffer()
 
         addHook('currentModelChanged', self.onModelChange)
         addHook('reset', self.onReset)
@@ -40,23 +42,35 @@ class AnkidownImporter(AddCards):
         restoreGeom(self, "ankidown")
         addCloseShortcut(self)
 
-        self.setupBuffer()
 
         self.onReset()
         self.show()
         self.activateWindow()
 
     def addCards(self):
+        config = getConfig()
+        # The needed stuff
         super().addNote(self.currentNote().note)
-        self.onReset(keep=True)
+        self.onReset(keep=True) # These lines are required for database integrity
         self.mw.col.autosave()
+
+        
+        model_name = self.currentNote().note._model['name']
+        if model_name in config['recent_models']:
+            config['recent_models'].remove(model_name)
+        config['recent_models'].insert(0, model_name)
+        writeConfig(config)
+
         self.buffer.remove(self.currentNote())
+
         if self.bufferIndex < len(self.buffer):
             self.setBuffer(self.bufferIndex)
         elif len(self.buffer) > 0:
             self.setBuffer(self.bufferIndex - 1)
         else:
             self.setupBuffer()
+
+        self.tally += 1
 
     def setupBuffer(self):
         self.buffer = [ AnkidownNote() ]
@@ -135,6 +149,11 @@ class AnkidownImporter(AddCards):
         if self.currentNote().note:
             self.editor.setNote(self.currentNote().note)
 
+            self.mw.col.conf['curModel'] = self.currentNote().note._model['id']
+            runHook("currentModelChanged")
+            self.mw.reset()
+
+
     def _reject(self):
         remHook('reset', self.onReset)
         remHook('currentModelChanged', self.onModelChange)
@@ -146,6 +165,7 @@ class AnkidownImporter(AddCards):
         self.mw.maybeReset()
         saveGeom(self, "ankidown")
         aqt.dialogs.markClosed("Ankidown-Importer")
+        tooltip("Added {} Notes".format(self.tally), period=1000)
         QDialog.reject(self)
 
     def ifCanClose(self, onOk):
