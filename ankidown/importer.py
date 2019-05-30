@@ -135,7 +135,7 @@ class AnkidownImporter(AddCards):
                 for raw_note in text:
                     self.buffer.append(AnkidownNote(file=file_name, text=raw_note))
         for note in self.buffer:
-            note.render(tmp_template=self.template)
+            note.render(tmp_template=self.template, guess_model=True)
         self.setBuffer(0) # Given root index
 
     def setBuffer(self, index):
@@ -148,11 +148,6 @@ class AnkidownImporter(AddCards):
 
         if self.currentNote().note:
             self.editor.setNote(self.currentNote().note)
-
-            self.mw.col.conf['curModel'] = self.currentNote().note._model['id']
-            runHook("currentModelChanged")
-            self.mw.reset()
-
 
     def _reject(self):
         remHook('reset', self.onReset)

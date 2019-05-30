@@ -16,16 +16,18 @@ class AnkidownNote:
         self.template = template
         self.note = note
 
-    def render(self, model=None, tmp_template=None):
+    def render(self, model=None, tmp_template=None, guess_model=False):
 
         if tmp_template:
             template = tmp_template
         else:
             template = self.template
 
-        if not model:
-            model_name = template.findSimilar()[0]['model']
-            note = Note(mw.col, model=mw.col.models.byName(model_name))
+        if not model and not guess_model:
+            note = mw.col.newNote()
+        elif not model and guess_model and template.bestModel():
+            best_model = mw.col.models.byName(template.bestModel())
+            note = Note(mw.col, model=best_model)
         else:
             note = Note(mw.col, model=model)
 

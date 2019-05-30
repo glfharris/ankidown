@@ -126,6 +126,34 @@ class Template:
     def gen(self):
         return sanitize(" -", self.text)
 
+    def bestModel(self):
+        config = getConfig()
+        sims = self.findSimilar()
+        maximums = []
+        
+        maximums.append(sims[0]['model'])
+        for mod in sims[1:]:
+            if mod['tot'] == sims[0]['tot']:
+                maximums.append(mod['model'])
+
+        if len(maximums) > 1: # if thers several equal return most recent
+            recents = []
+            for mod in maximums:
+                if mod in config['recent_models']:
+                    recents.append({'model': mod, 'rank':config['recent_models'].index(mod)})
+            recents = sorted(recents, key=lambda x: x['rank'])
+            if len(recents) > 0:
+                return recents[0]['model']
+            else:
+                # If several good matches but none are recent, just guess
+                return maximums[0]
+        elif len(maximums) == 1:
+            return maximums[0] # If there's only one match just return it
+        else:
+            return None
+            
+
+
     def findSimilar(self):
         model_names = modelNames()
         totals = []
