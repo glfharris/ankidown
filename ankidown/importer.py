@@ -66,7 +66,7 @@ class AnkidownImporter(AddCards):
         if ret == 1:
             showInfo("First field is empty")
             return
-        super().addNote(note)
+        self.mw.col.addNote(note)
         # These lines are required for database integrity
         self.onReset(keep=True)
         self.mw.col.autosave()

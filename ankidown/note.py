@@ -55,12 +55,15 @@ class AnkidownNote:
             showInfo("No mapping to Note has been found")
             return
         for k, v in res.named.items():
-            key = parse_to_key[k]
-            if key in key_to_fields.keys():
-                field = key_to_fields[key]
-                if config["format"] is "markdown":
-                    note[field] = md(v)
-                else:
-                    note[field] = v
+            if k == "Tags":
+                note.tags += v.split(" ")
+            else:
+                key = parse_to_key[k]
+                if key in key_to_fields.keys():
+                    field = key_to_fields[key]
+                    if config["format"] is "markdown":
+                        note[field] = md(v)
+                    else:
+                        note[field] = v
 
         self.note = note
