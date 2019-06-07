@@ -21,4 +21,4 @@ test: build
 	anki
 
 docs: Readme.md
-	tail -n 2 Readme.md | pandoc -f gfm -o build/ankiweb_ankidown.html
+	pandoc Readme.md -f gfm -o build/ankiweb_ankidown.html
