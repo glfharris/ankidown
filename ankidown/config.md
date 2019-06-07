@@ -11,6 +11,10 @@ This setting enables whether Ankidown will try to find multiple notes per file i
 
 If `multiple_notes_per_file` is set to `true`, Ankidown will use this to split the incoming fields. By default it's `---` which is a linebreak in Markdown.
 
+### `format`
+
+Currently only `markdown` and `raw` are supported. If `markdown` is selected then Ankidown will turn your notes into HTML (the way Anki normally represents its cards).
+
 ### `last_template`
 
 Is what it says. Is used to load the last used template on starting Ankidown

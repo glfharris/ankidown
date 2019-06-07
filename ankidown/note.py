@@ -7,6 +7,7 @@ from aqt.utils import showInfo
 from markdown import markdown as md
 
 from .template import Template
+from .utils import getConfig
 from .vendor.parse import parse
 
 
@@ -19,6 +20,8 @@ class AnkidownNote:
         self.note = note
 
     def render(self, model=None, tmp_template=None, guess_model=False):
+        config = getConfig()
+
         if not self.text:
             self.note = mw.col.newNote()
             return
@@ -55,6 +58,9 @@ class AnkidownNote:
             key = parse_to_key[k]
             if key in key_to_fields.keys():
                 field = key_to_fields[key]
-                note[field] = md(v)
+                if config["format"] is "markdown":
+                    note[field] = md(v)
+                else:
+                    note[field] = v
 
         self.note = note

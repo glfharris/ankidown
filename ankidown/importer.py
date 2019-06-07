@@ -107,6 +107,8 @@ class AnkidownImporter(AddCards):
 
         self.form.noteTextEdit.textChanged.connect(self.onNoteTextChanged)
 
+        self.form.toolButton.clicked.connect(self.onToolButton)
+
     def currentNote(self):
         return self.buffer[self.bufferIndex]
 
@@ -121,6 +123,9 @@ class AnkidownImporter(AddCards):
             self.setBuffer(len(self.buffer) - 1)
         else:
             self.setBuffer(self.bufferIndex - 1)
+
+    def onToolButton(self):
+        showInfo("This is a placeholder for future versions")
 
     def onNoteTextChanged(self):
         text = self.form.noteTextEdit.toPlainText()
