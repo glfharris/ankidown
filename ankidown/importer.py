@@ -18,6 +18,7 @@ from difflib import get_close_matches
 from markdown import markdown as md
 from re import sub
 from os import path
+import unicodedata
 
 from .note import AnkidownNote
 from .template import TemplaterWidget
@@ -66,6 +67,9 @@ class AnkidownImporter(AddCards):
         if ret == 1:
             showInfo("First field is empty")
             return
+        # Need to update Note Tags with any typed in Editor
+        tagsText = unicodedata.normalize("NFC", self.editor.tags.text())
+        note.tags = self.mw.col.tags.canonify(self.mw.col.tags.split(tagsText))
         self.mw.col.addNote(note)
         # These lines are required for database integrity
         self.onReset(keep=True)
@@ -176,7 +180,8 @@ class AnkidownImporter(AddCards):
             self.setNote(self.currentNote().note)
 
     def setNote(self, note):
-        self.editor.setNote(self.currentNote().note)
+        self.editor.setNote(note)
+        self.editor.tags.setText(note.stringTags().strip())
 
         # Sets current model to Note model
         model = self.currentNote().note._model
