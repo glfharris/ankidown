@@ -1,12 +1,12 @@
 {
-    "min_match_ratio": 0.7,
-    "recent_models": ["Basic"],
-    "multiple_notes_per_file": true,
-    "note_separator": "---",
-    "last_template": "Basic",
-    "templates": {
-        "Basic": {
-            "text": "# {Front}\n{Back}"
-        }
+  "min_match_ratio": 0.7,
+  "recent_models": ["Basic"],
+  "multiple_notes_per_file": true,
+  "note_separator": "---",
+  "last_template": "Basic",
+  "templates": {
+    "Basic": {
+      "text": "# {Front}\n{Back}"
     }
+  }
 }

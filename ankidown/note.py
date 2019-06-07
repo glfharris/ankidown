@@ -2,11 +2,13 @@ from difflib import get_close_matches
 
 from anki.notes import Note
 from aqt import mw
+from aqt.utils import showInfo
 
 from markdown import markdown as md
 
 from .template import Template
 from .vendor.parse import parse
+
 
 class AnkidownNote:
     def __init__(self, file="", text="", config={}, template=None, note=None):
@@ -31,10 +33,24 @@ class AnkidownNote:
         else:
             note = Note(mw.col, model=model)
 
-        res = parse(template.gen(), self.text)
+        try:
+            res = parse(template.gen(), self.text)
+        except:
+            showInfo("Unable to Parse template")
+            return
 
+        parse_to_key = {}
+        for k in res.named.keys():
+            parse_to_key[k] = get_close_matches(k, template.keys())[0]
+
+        key_to_fields, _ = template.getSimilarity(note.model()["name"])
+        if not key_to_fields:
+            showInfo("No mapping to Note has been found")
+            return
         for k, v in res.named.items():
-            key = get_close_matches(k, note.keys())[0]
-            note[key] = md(v)
+            key = parse_to_key[k]
+            if key in key_to_fields.keys():
+                field = key_to_fields[key]
+                note[field] = md(v)
 
         self.note = note

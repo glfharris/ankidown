@@ -6,8 +6,10 @@ from .importer import AnkidownImporter
 
 DialogManager._dialogs["Ankidown-Importer"] = [AnkidownImporter, None]
 
+
 def open_importer():
     aqt.dialogs.open("Ankidown-Importer", mw)
+
 
 ankidown_menu = QMenu("Ankidown", mw)
 
