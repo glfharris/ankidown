@@ -56,7 +56,9 @@ class AnkidownNote:
             return
         for k, v in res.named.items():
             if k == "Tags":
-                note.tags += v.split(" ")
+                # Uses the normal way Anki processes tag strings
+                tags = mw.col.tags.canonify(mw.col.tags.split(v))
+                note.tags += tags
             else:
                 key = parse_to_key[k]
                 if key in key_to_fields.keys():
