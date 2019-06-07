@@ -131,7 +131,8 @@ class AnkidownImporter(AddCards):
             self.currentNote().render(tmp_template=self.template)
         else:
             self.currentNote().render()
-        self.editor.setNote(self.currentNote().note)
+
+        self.setNote(self.currentNote().note)
 
     def onFilePicked(self):
         config = getConfig()
@@ -167,7 +168,19 @@ class AnkidownImporter(AddCards):
         )
 
         if self.currentNote().note:
-            self.editor.setNote(self.currentNote().note)
+            self.setNote(self.currentNote().note)
+
+    def setNote(self, note):
+        self.editor.setNote(self.currentNote().note)
+
+        # Sets current model to Note model
+        model = self.currentNote().note._model
+        self.mw.col.conf["curModel"] = model["id"]
+        cdeck = self.mw.col.decks.current()
+        cdeck["mid"] = model["id"]
+        self.mw.col.decks.save(cdeck)
+        runHook("currentModelChanged")
+        self.mw.reset()
 
     def _reject(self):
         remHook("reset", self.onReset)
