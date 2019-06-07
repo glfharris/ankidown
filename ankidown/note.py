@@ -19,6 +19,9 @@ class AnkidownNote:
         self.note = note
 
     def render(self, model=None, tmp_template=None, guess_model=False):
+        if not self.text:
+            self.note = mw.col.newNote()
+            return
 
         if tmp_template:
             template = tmp_template
@@ -35,12 +38,13 @@ class AnkidownNote:
 
         try:
             res = parse(template.gen(), self.text)
+            parse_keys = res.named.keys()
         except:
             showInfo("Unable to Parse template")
             return
 
         parse_to_key = {}
-        for k in res.named.keys():
+        for k in parse_keys:
             parse_to_key[k] = get_close_matches(k, template.keys())[0]
 
         key_to_fields, _ = template.getSimilarity(note.model()["name"])
