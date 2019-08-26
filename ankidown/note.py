@@ -63,7 +63,7 @@ class AnkidownNote:
                 key = parse_to_key[k]
                 if key in key_to_fields.keys():
                     field = key_to_fields[key]
-                    if config["format"] is "markdown":
+                    if config["format"] == "markdown":
                         note[field] = md(v)
                     else:
                         note[field] = v
