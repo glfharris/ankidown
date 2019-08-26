@@ -154,7 +154,7 @@ class AnkidownImporter(AddCards):
             return
         # Scope for improved performance by only loading text when needed
         for file_name in file_names:
-            with open(file_name, "r") as f:
+            with open(file_name, "r", encoding="utf-8") as f:
                 text = f.read()
                 if config["note_separator"]:
                     text = [
