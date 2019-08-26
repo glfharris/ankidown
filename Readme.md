@@ -7,6 +7,10 @@ Currently Ankidown allows you to import a file and it's template, and convert it
 
 ![](https://raw.githubusercontent.com/glfharris/ankidown/master/assets/example.gif)
 
+## Installation
+
+Ankidown is now available on [Ankiweb](https://ankiweb.net/shared/info/38786043), or just using the code `38786043` from within Anki itself.
+
 ## Contributing
 
 Everyone is welcome to open issues and to suggest new features. Slight word of warning is that Ankidown is still in the rapid prototyping (read: chaotic) phase, so pull requests might not be the best idea till it's a little more stable.
