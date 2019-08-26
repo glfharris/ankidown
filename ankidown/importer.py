@@ -70,6 +70,7 @@ class AnkidownImporter(AddCards):
         # Need to update Note Tags with any typed in Editor
         tagsText = unicodedata.normalize("NFC", self.editor.tags.text())
         note.tags = self.mw.col.tags.canonify(self.mw.col.tags.split(tagsText))
+        note.model()["did"] = self.deckChooser.selectedId()
         self.mw.col.addNote(note)
         # These lines are required for database integrity
         self.onReset(keep=True)
