@@ -21,6 +21,10 @@ Ankidown is now available on [Ankiweb](https://ankiweb.net/shared/info/38786043)
 
 First and foremost, this is a hobby project for me. I made it mostly to help some of the issues I was having with Anki at the time, and to see if I could. If you don't experience the same problems with Anki, this add-on probably won't help you.
 
+### Flexibility
+
+Most of the existing ways of importing require strict formatting, such as CSV files. Even the ones that can import things like markdown, generally enforce a strict schema, such as enforcing cards be in lists. They also tend not to work for cards that aren't the default Front/Back fields. This basically means that the text documents don't stand for themselves as readable notes. No one wants to read a CSV to find out what they know about a subject. So Ankidown lets you write your notes in a format you choose, that makes sense to you, instead of being forced on you.
+
 ### Text Editing
 
 Personally I'm not a great fan of the text editor in Anki. It's ok for the quick session, but if making cards in bulk it gets tiresome, and I'd prefer to use a tool better suited.
