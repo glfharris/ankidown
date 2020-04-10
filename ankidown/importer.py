@@ -124,7 +124,7 @@ class AnkidownImporter(AddCards):
             self.setBuffer(0)
 
     def prevNote(self):
-        if self.bufferIndex is 0:
+        if self.bufferIndex == 0:
             self.setBuffer(len(self.buffer) - 1)
         else:
             self.setBuffer(self.bufferIndex - 1)

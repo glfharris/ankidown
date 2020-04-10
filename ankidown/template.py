@@ -82,7 +82,7 @@ class TemplaterWidget:
         template_list = ["Create new Template..."] + list(config["templates"].keys())
         selection = chooseList("Select a Template:", template_list)
 
-        if selection is 0:
+        if selection == 0:
             name = getOnlyText("New Template name:")
             if not name:
                 return
