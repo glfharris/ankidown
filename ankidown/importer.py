@@ -151,7 +151,7 @@ class AnkidownImporter(AddCards):
         )
         if not file_names:
             return
-        self.buffer = []
+        self.buffer = [] # Needs to be after exit failure otherwise wipe buffer
         # Scope for improved performance by only loading text when needed
         for file_name in file_names:
             with open(file_name, "r", encoding="utf-8") as f:
