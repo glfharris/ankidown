@@ -146,12 +146,12 @@ class AnkidownImporter(AddCards):
 
     def onFilePicked(self):
         config = getConfig()
-        self.buffer = []
         file_names = aqt.utils.getFile(
             self, "Select File to Import", None, key="ankidown-files", multi=True
         )
         if not file_names:
             return
+        self.buffer = []
         # Scope for improved performance by only loading text when needed
         for file_name in file_names:
             with open(file_name, "r", encoding="utf-8") as f:

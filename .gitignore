@@ -107,3 +107,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 ankidown/forms/__init__.py
+ankidown/meta.json
